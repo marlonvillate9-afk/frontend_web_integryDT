@@ -1,0 +1,61 @@
+<div class="page">
+  <div class="page-header">
+    <span class="breadcrumb">Herramientas / Gadgets</span>
+    <h1>Motor de Ejecución</h1>
+  </div>
+
+  <div class="card">
+    <h2 class="card-title">Ejecutar herramienta en un Client Integry DT</h2>
+    <div class="controls">
+      <div class="field">
+        <label>Equipo destino</label>
+        <select class="select" [(ngModel)]="selectedDeviceId">
+          @for (d of devices(); track d.id) { <option [value]="d.id">{{ d.name }} — {{ d.status }}</option> }
+        </select>
+      </div>
+      <div class="field">
+        <label>Herramienta</label>
+        <select class="select" [(ngModel)]="selectedToolCode">
+          @for (t of catalog(); track t.toolCode) { <option [value]="t.toolCode">{{ t.toolName }} · v{{ t.version }}</option> }
+        </select>
+      </div>
+      @if (selectedDevice(); as d) { <span class="status" [class.online]="d.status === 'online'" [class.offline]="d.status !== 'online'">{{ d.status }}</span> }
+      <button class="btn-primary" type="button" (click)="execute()" [disabled]="running() || !selectedDeviceId || !selectedToolCode">
+        {{ running() ? 'Ejecutando...' : 'Ejecutar' }}
+      </button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2 class="card-title">Catálogo habilitado para la empresa</h2>
+    @if (catalog().length === 0) { <div class="empty">No existen gadgets publicados y habilitados para este tenant.</div> }
+    <div class="catalog">
+      @for (tool of catalog(); track tool.toolCode) {
+        <div class="tool" [class.selected]="tool.toolCode === selectedToolCode" (click)="selectTool(tool.toolCode)">
+          <h3>{{ tool.toolName }}</h3>
+          <p>{{ tool.gadgetName }}</p>
+          <div class="badges"><span class="badge">{{ tool.gadgetCode }}</span><span class="badge">v{{ tool.version }}</span><span class="badge">{{ tool.riskLevel }}</span></div>
+        </div>
+      }
+    </div>
+  </div>
+
+  @if (currentJob(); as job) {
+    <div class="card">
+      <h2 class="card-title">Job {{ job.id }}</h2>
+      <div><strong>{{ job.toolCode }}</strong> / {{ job.gadgetCode }} v{{ job.version }} · {{ job.deviceName }} · <span class="badge">{{ job.status }}</span></div>
+      <div class="job">
+        <div class="timeline">
+          <strong>Timeline</strong>
+          @for (event of events(); track event.createdAt + event.type) {
+            <div class="event"><strong>{{ event.type }}</strong> — {{ event.message }}</div>
+          }
+        </div>
+        <div class="result">
+          <strong>Resultado</strong>
+          <pre>{{ formattedResult() || 'Esperando resultado...' }}</pre>
+        </div>
+      </div>
+    </div>
+  }
+</div>

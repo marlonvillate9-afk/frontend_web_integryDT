@@ -1,0 +1,104 @@
+<div class="page">
+  <div class="page-header">
+    <span class="breadcrumb">Administración de Recursos</span>
+    <h1>Repositorios / Gestión de Repositorios</h1>
+  </div>
+
+  <div class="grid">
+    <!-- FORM -->
+    <div class="card">
+      <h2 class="card-title">Agregar Repositorio</h2>
+      <form (ngSubmit)="submit()">
+        <div class="form-group">
+          <label>Nombre del Repositorio</label>
+          <input class="form-control" [(ngModel)]="name" name="name" placeholder="Ej. integry-backend" required>
+        </div>
+        <div class="form-group">
+          <label>URL del Repositorio</label>
+          <input class="form-control" [(ngModel)]="url" name="url" placeholder="https://github.com/org/repo.git" required>
+        </div>
+        <div class="form-group">
+          <label>Tipo de Repositorio</label>
+          <div class="type-tabs">
+            <button type="button" [class.active]="type==='Git'" (click)="type='Git'">🔀 Git</button>
+            <button type="button" [class.active]="type==='SVN'" (click)="type='SVN'">📦 SVN</button>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Rama por Defecto</label>
+          <input class="form-control" [(ngModel)]="branch" name="branch" placeholder="main">
+        </div>
+        <div class="form-group">
+          <label>Descripción</label>
+          <textarea class="form-control" [(ngModel)]="desc" name="desc" placeholder="Breve descripción..."></textarea>
+        </div>
+        <div class="row-toggle">
+          <span>Estado Activo</span>
+          <label class="switch">
+            <input type="checkbox" [(ngModel)]="active" name="active">
+            <span class="slider"></span>
+          </label>
+        </div>
+        <button type="submit" class="btn-primary">+ Agregar Repositorio</button>
+      </form>
+    </div>
+
+    <!-- TABLE -->
+    <div class="card">
+      <h2 class="card-title">Repositorios Registrados</h2>
+      <div class="filters">
+        <div class="search-wrap">
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input class="search-input" [ngModel]="search()" (ngModelChange)="search.set($event)"
+                 name="search" placeholder="Buscar por nombre o URL...">
+        </div>
+        <select class="filter-select" [ngModel]="typeFilter()" (ngModelChange)="typeFilter.set($event)" name="tf">
+          <option value="">Todos los tipos</option>
+          <option value="Git">Git</option>
+          <option value="SVN">SVN</option>
+        </select>
+      </div>
+      <div class="table-wrap">
+        @if (filteredRepos().length === 0) {
+          <div class="empty">No se encontraron repositorios.</div>
+        } @else {
+          <table>
+            <thead><tr>
+              <th>Repositorio</th><th>Tipo</th><th>Rama</th><th>Estado</th><th>Acciones</th>
+            </tr></thead>
+            <tbody>
+              @for (r of filteredRepos(); track r.id) {
+                <tr>
+                  <td>
+                    <div class="repo-name">{{ r.name }}</div>
+                    <div class="repo-url">{{ r.url }}</div>
+                  </td>
+                  <td><span class="badge" [class]="r.type==='Git' ? 'badge-git' : 'badge-svn'">{{ r.type }}</span></td>
+                  <td class="mono">{{ r.branch }}</td>
+                  <td><span class="badge" [class]="r.active ? 'badge-on' : 'badge-off'">{{ r.active ? '● Activo' : '○ Inactivo' }}</span></td>
+                  <td>
+                    <div class="actions">
+                      <button type="button" class="icon-btn edit"  (click)="edit(r)"        title="Editar">✏️</button>
+                      <button type="button" class="icon-btn clone" (click)="copyUrl(r)"     title="Copiar URL">📋</button>
+                      <button type="button" class="icon-btn del"   (click)="openModal(r.id)" title="Eliminar">🗑️</button>
+                    </div>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        }
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-confirm-modal
+  [visible]="showModal"
+  title="Eliminar Repositorio"
+  message="¿Estás seguro? Esta acción no se puede deshacer."
+  confirmLabel="Sí, Eliminar"
+  (confirmed)="confirmDelete()"
+  (cancelled)="showModal = false" />
+
+<app-toast #toastRef />

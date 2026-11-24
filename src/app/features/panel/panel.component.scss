@@ -1,0 +1,43 @@
+.panel-page {
+  padding: 36px 40px;
+}
+
+.page-header {
+  margin-bottom: 32px;
+  h1 { font-size: 26px; font-weight: 600; }
+  p  { color: var(--muted); margin-top: 4px; font-size: 14px; strong { color: var(--cyan); } }
+}
+
+.modules-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 18px;
+}
+
+.mod-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 22px;
+  cursor: pointer;
+  transition: all .25s;
+  position: relative;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 30px rgba(0,0,0,.3);
+  }
+
+  &.color-cyan:hover   { border-color: var(--cyan);   }
+  &.color-purple:hover { border-color: var(--purple); }
+  &.color-green:hover  { border-color: var(--green);  }
+
+  .mod-code  { font-size: 11px; font-weight: 700; color: var(--muted); letter-spacing: .8px; margin-bottom: 10px; }
+  .mod-title { font-size: 16px; font-weight: 600; margin-bottom: 8px; }
+  .mod-desc  { font-size: 13px; color: var(--muted); line-height: 1.6; }
+  .mod-arrow {
+    position: absolute; bottom: 18px; right: 20px;
+    font-size: 18px; color: var(--muted); transition: all .2s;
+  }
+  &:hover .mod-arrow { color: var(--cyan); transform: translateX(4px); }
+}

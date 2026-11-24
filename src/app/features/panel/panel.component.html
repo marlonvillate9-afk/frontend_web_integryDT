@@ -1,0 +1,17 @@
+<div class="panel-page">
+  <div class="page-header">
+    <h1>Panel Principal</h1>
+    <p>Bienvenido, <strong>{{ user()?.displayName }}</strong>. Selecciona un módulo para comenzar.</p>
+  </div>
+
+  <div class="modules-grid">
+    @for (mod of modules(); track mod.code) {
+      <div class="mod-card" [class]="'color-' + mod.color" (click)="navigate(mod.route)">
+        <div class="mod-code">{{ mod.code }}</div>
+        <div class="mod-title">{{ mod.title }}</div>
+        <div class="mod-desc">{{ mod.desc }}</div>
+        <div class="mod-arrow">→</div>
+      </div>
+    }
+  </div>
+</div>
